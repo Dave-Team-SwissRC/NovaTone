@@ -1,0 +1,24 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "windows-release",
+      "displayName": "NovaTone Windows Release (VS 2022)",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/windows-release",
+      "cacheVariables": { "CMAKE_CONFIGURATION_TYPES": "Release" }
+    },
+    {
+      "name": "macos-release",
+      "displayName": "NovaTone macOS Release (Xcode, Universal)",
+      "generator": "Xcode",
+      "binaryDir": "${sourceDir}/build/macos-release",
+      "cacheVariables": { "CMAKE_CONFIGURATION_TYPES": "Release" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "windows-release", "configurePreset": "windows-release", "configuration": "Release", "targets": ["NovaTone_VST3", "NovaTone_Standalone"] },
+    { "name": "macos-release",   "configurePreset": "macos-release",   "configuration": "Release", "targets": ["NovaTone_VST3", "NovaTone_Standalone"] }
+  ]
+}

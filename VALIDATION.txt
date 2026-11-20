@@ -1,0 +1,161 @@
+NovaTone 0.2 - Validierung (Stand der Engine-Tests)
+====================================================
+Erzeugt mit: Tests/run_tests.sh, Tests/analyze.py, Tests/analyze2.py (g++ 13.3, Python/numpy)
+WICHTIG: Getestet ist die JUCE-freie Engine (Source/Engine/*). Die JUCE-Huelle (PluginProcessor/PluginEditor)
+und der CMake-Build konnten in der Entwicklungsumgebung NICHT kompiliert werden (kein JUCE/Netzwerk).
+
+---- Engine-Test (ohne Pegelmatrix) ----
+== 1. Parametertabelle
+  67 Parameter, 16 Presets
+== 2. Alle Instrumente x Noten x Velocities: Pegel + NaN
+  Instrument              Note  Vel  Peak dB  Tail dB
+== 3. Blockgroessen-Unabhaengigkeit (1, 7, 64, 512, 4096)
+  Pick Bass          max. Abweichung: 0.00e+00
+  Warm Analog Layer  max. Abweichung: 0.00e+00
+  Concert Grand      max. Abweichung: 0.00e+00
+== 4. Limiter-Garantie bei extremem Pegel
+  max. Ausgangspegel: 0.966 (-0.30 dBFS), Ceiling 0.966
+== 5. Stress: 200 Noten + Pedal + Bend + Zufalls-CC, 20 s, Echtzeit-Faktor
+  Pick Bass            render 0.73s fuer 20s Audio -> 27.2x Echtzeit, Peak 0.75
+  Warm Analog Layer    render 1.14s fuer 20s Audio -> 17.6x Echtzeit, Peak 0.94
+  Wide Synth Layer     render 1.74s fuer 20s Audio -> 11.5x Echtzeit, Peak 0.95
+  Concert Grand        render 2.54s fuer 20s Audio -> 7.9x Echtzeit, Peak 0.66
+== 6. Mono/Legato + Glide, Pitchbend, Sustain-Pedal, Oktav-Layer
+  Aktive Stimmen nach Legato-Lauf: 0
+  Pedal: Pegel waehrend Pedal -27.4 dB, nach Loslassen (Release) -72.8 dB
+== 7. Effekte einzeln: Latenz Drive, Reverb-Abklingzeit, Kompressor, Dyn-EQ
+  Drive-Impuls: Maximum nach 15 Samples (deklarierte Latenz 15), Betrag 0.966
+  Dry-Pfad: Maximum nach 15 Samples
+  Reverb Typ 0: RMS bei 0.5s -73.3 dB, bei 1.5s -126.1 dB, Ende(9s) -240.0 dB
+  Reverb Typ 3: RMS bei 0.5s -109.1 dB, bei 1.5s -228.3 dB, Ende(9s) -240.0 dB
+  Reverb Typ 5: RMS bei 0.5s -69.5 dB, bei 1.5s -112.0 dB, Ende(9s) -240.0 dB
+  Reverb Typ 7: RMS bei 0.5s -55.5 dB, bei 1.5s -67.4 dB, Ende(9s) -140.7 dB
+  Kompressor: -6 dBFS Sinus, Thr -20, Ratio 4 -> GR -9.73 dB (erwartet ca. -10.5)
+  Dyn-EQ Boost +9 dB bei Eingang -50.5 dBFS -> wirksamer Boost 9.00 dB
+  Dyn-EQ Boost +9 dB bei Eingang -10.5 dBFS -> wirksamer Boost 0.00 dB
+  Dyn-EQ Cut -9 dB bei Eingang -50.5 dBFS -> wirksamer Cut 0.00 dB
+  Dyn-EQ Cut -9 dB bei Eingang -10.5 dBFS -> wirksamer Cut -9.00 dB
+== 8. Sample-Wiedergabe (synthetisches Sample C3 = Note 48, 440-Hz-Ton-unabhaengig)
+
+ALLE TESTS BESTANDEN (0 Fehler)
+
+---- Pegelmatrix: Peak dBFS bei Master -3 dB, Limiter an; 'Tail' = Pegel 2.1-2.5 s (Note-Off bei 1.0 s) ----
+  Pick Bass                 36   40    -23.6   -106.0
+  Pick Bass                 36  120    -11.5    -94.5
+  Pick Bass                 60   40    -23.3   -116.7
+  Pick Bass                 60  120    -11.0   -104.7
+  Pick Bass                 84   40    -23.9   -119.8
+  Pick Bass                 84  120    -11.4   -107.4
+  Finger Bass               36   40    -22.5    -97.9
+  Finger Bass               36  120    -10.2    -85.6
+  Finger Bass               60   40    -22.6   -109.9
+  Finger Bass               60  120    -10.3    -97.6
+  Finger Bass               84   40    -22.7   -114.6
+  Finger Bass               84  120    -10.4   -102.2
+  Synth Bass - Fast         36   40    -23.6    -80.9
+  Synth Bass - Fast         36  120    -10.9    -68.5
+  Synth Bass - Fast         60   40    -23.5    -84.9
+  Synth Bass - Fast         60  120    -10.4    -72.4
+  Synth Bass - Fast         84   40    -23.9    -81.3
+  Synth Bass - Fast         84  120    -11.3    -68.9
+  Synth Bass - Soft         36   40    -23.8    -81.5
+  Synth Bass - Soft         36  120    -11.2    -69.1
+  Synth Bass - Soft         60   40    -24.1    -86.0
+  Synth Bass - Soft         60  120    -11.2    -73.5
+  Synth Bass - Soft         84   40    -25.0    -82.7
+  Synth Bass - Soft         84  120    -11.7    -70.2
+  Warm Analog Layer         36   40    -21.1    -80.9
+  Warm Analog Layer         36  120     -8.4    -68.5
+  Warm Analog Layer         60   40    -21.8    -86.1
+  Warm Analog Layer         60  120     -8.7    -73.6
+  Warm Analog Layer         84   40    -22.0    -89.0
+  Warm Analog Layer         84  120     -8.8    -76.6
+  Digital Layer             36   40    -21.6    -80.1
+  Digital Layer             36  120     -8.9    -67.7
+  Digital Layer             60   40    -20.5    -87.5
+  Digital Layer             60  120     -7.8    -75.1
+  Digital Layer             84   40    -20.6    -84.9
+  Digital Layer             84  120     -8.0    -72.4
+  Atmospheric Layer         36   40    -20.4    -70.1
+  Atmospheric Layer         36  120     -7.9    -57.5
+  Atmospheric Layer         60   40    -21.7    -68.2
+  Atmospheric Layer         60  120     -8.7    -55.1
+  Atmospheric Layer         84   40    -20.5    -64.6
+  Atmospheric Layer         84  120     -7.9    -51.8
+  Wide Synth Layer          36   40    -22.0    -84.1
+  Wide Synth Layer          36  120     -9.3    -71.7
+  Wide Synth Layer          60   40    -22.0    -86.3
+  Wide Synth Layer          60  120     -9.1    -73.9
+  Wide Synth Layer          84   40    -21.1    -87.0
+  Wide Synth Layer          84  120     -8.7    -74.6
+  Concert Grand             36   40    -22.5    -88.9
+  Concert Grand             36  120    -11.3    -82.9
+  Concert Grand             60   40    -21.9   -100.7
+  Concert Grand             60  120    -10.3    -93.0
+  Concert Grand             84   40    -22.0   -112.4
+  Concert Grand             84  120     -9.8   -103.6
+  Vintage Piano             36   40    -20.1    -93.4
+  Vintage Piano             36  120     -9.3    -84.6
+  Vintage Piano             60   40    -20.8    -99.2
+  Vintage Piano             60  120     -9.1    -88.7
+  Vintage Piano             84   40    -21.5   -125.2
+  Vintage Piano             84  120     -9.4   -114.6
+  Muted Grand               36   40    -20.1    -97.5
+  Muted Grand               36  120     -9.6    -87.8
+  Muted Grand               60   40    -21.2   -120.1
+  Muted Grand               60  120     -9.9   -109.4
+  Muted Grand               84   40    -22.5   -129.0
+  Muted Grand               84  120    -10.3   -119.0
+  Classic Piano             36   40    -21.6    -89.9
+  Classic Piano             36  120    -11.3    -82.5
+  Classic Piano             60   40    -21.7    -96.3
+  Classic Piano             60  120     -9.7    -87.2
+  Classic Piano             84   40    -21.8   -119.6
+  Classic Piano             84  120     -9.7   -109.6
+
+---- Klanganalyse (Python) ----
+--- Tonhoehen-Genauigkeit (Abweichung in Cent), Grundton-Suche +-1 Halbton
+Pick Bass            -1.4    +0.1    -0.1
+Finger Bass          -1.9    +0.1    +0.0
+Synth Bass Fast      -0.5    +0.0    -0.0
+Synth Bass Soft      -0.4    +0.0    -0.0
+Warm Analog         -17.4   -15.7   -16.7
+Digital             +21.5    -6.2    -0.0
+Atmospheric         +19.3   -18.8   -22.6
+Wide Synth           -1.8    -8.8   -18.6
+Concert Grand        +1.5    +2.4    +2.0
+Vintage Piano        +2.1    +1.2    +0.2
+Muted Grand          +0.1    +1.9    +2.6
+Classic Piano        +1.9    +2.6    -0.2
+max |Abweichung| = 22.6 ct
+--- Helligkeit (Spektralschwerpunkt Hz) leise->laut @ C4
+Pick Bass          vel40:     744   vel120:     871   Verhaeltnis 1.17
+Finger Bass        vel40:     443   vel120:     461   Verhaeltnis 1.04
+Concert Grand      vel40:     830   vel120:    1578   Verhaeltnis 1.90
+Vintage Piano      vel40:     506   vel120:     780   Verhaeltnis 1.54
+Muted Grand        vel40:     410   vel120:     565   Verhaeltnis 1.38
+Classic Piano      vel40:     654   vel120:    1172   Verhaeltnis 1.79
+--- Knackser: groesster Sprung zwischen Samples (relativ zum Peak)
+Pitchbend +12 st (Soll C4 261.6 -> C5 523.3): vor 262.0 Hz, nach 524.0 Hz
+Oktav-Layer (+2 Okt, Mix 0.5): Energie bei 110 Hz 291.1, bei 440 Hz 130.5 (Referenz ohne Layer bei 440: 17.8)
+Legato (lange Fenster): 0.20s:  82.4  0.35s:  82.4  0.55s: 130.2  0.65s: 150.9  0.80s: 161.7  0.90s: 163.5  1.15s:  90.1  1.30s:  85.9
+--- Note-Off/On Klicktest: max Sprung im Release-Fenster vs. Sprung davor (Faktor >3 = verdaechtig)
+  inst0 n60: Onset-Sprung 0.083
+  inst0 n84: Onset-Sprung 0.208
+  inst1 n84: Onset-Sprung 0.103
+  inst2 n84: Onset-Sprung 0.308
+  inst3 n84: Onset-Sprung 0.051
+  inst5 n84: Onset-Sprung 0.063
+  inst8 n84: Onset-Sprung 0.238
+  inst9 n84: Onset-Sprung 0.162
+  inst10 n84: Onset-Sprung 0.174
+  inst11 n84: Onset-Sprung 0.185
+auffaellige Faelle: 10
+
+---- Notennamen-Parser ----
+parseNoteName: alle 18 Faelle ok
+
+Hinweise zur Interpretation:
+ - Layer-Instrumente zeigen +-20 ct: gewollter Unison-Detune (Messung greift eine der verstimmten Stimmen).
+ - 'Onset-Sprung' bei hohen Noten (n84): steile Flanke eines 1 kHz-Signals, kein Knackser (Huellkurve startet bei 0).
+ - Der Klicktest ist eine Heuristik, kein Hoertest.
