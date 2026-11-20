@@ -1,3 +1,4 @@
+
 name: Build NovaTone
 
 on:
@@ -11,14 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: ./Tests/run_tests.sh
+      - run: bash ./Tests/run_tests.sh
 
   windows:
     name: Windows (VST3 + Standalone)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cmake -B build -G "Visual Studio 17 2022" -A x64
+      - run: cmake -B build -G "Visual Studio 18 2026" -A x64
       - run: cmake --build build --config Release --target NovaTone_VST3 NovaTone_Standalone --parallel
       - uses: actions/upload-artifact@v4
         with:
